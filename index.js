@@ -124,7 +124,7 @@ setInterval(function() {
       if (err) return;
       agent
         .post(process.env.WEPLAY_OUT_URL)
-        .send(process.env.WEPLAY_HOST + time + '.png') // date is added to prevent caching by slack
+        .send(process.env.WEPLAY_HOST + '/' + time + '.png') // date is added to prevent caching by slack
         .end(function (err, res) {});
     });    
   }
