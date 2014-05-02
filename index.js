@@ -3,7 +3,6 @@ var fs = require('fs');
 var emulator = require('./emulator');
 var join = require('path').join;
 var md5 = require('crypto').createHash('md5');
-var msgpack = require('msgpack');
 var debug = require('debug')('weplay:worker');
 
 if (!process.env.WEPLAY_ROM) {
