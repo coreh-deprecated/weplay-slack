@@ -5,6 +5,7 @@ var join = require('path').join;
 var md5 = require('crypto').createHash('md5');
 var debug = require('debug')('weplay:worker');
 var express = require('express');
+var bodyParser = require('body-parser');
 
 if (!process.env.WEPLAY_ROM) {
   console.log('You must specify the ENV variable `WEPLAY_ROM` '
@@ -79,9 +80,16 @@ load();
 
 var app = express();
 
+express.use(bodyParser());
+
 app.get('/screen', function(req, res) {
   res.set('Content-Type', 'image/png');
   res.send(200, screen);
+});
+
+app.post('/input', function(req, res) {
+  console.log(req.body);
+  res.send(200);
 });
 
 app.listen(80);
