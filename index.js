@@ -117,10 +117,8 @@ setInterval(function() {
     updated = false;
     agent
       .post(process.env.WEPLAY_OUT_URL)
-      .send('test')
-      .end(function (err, res) {
-      
-      });
+      .send(process.env.WEPLAY_HOST + '/screen/' + new Date().valueOf() + '.png') // date is added to prevent caching by slack
+      .end(function (err, res) {});
   }
 }, 5000)
 
