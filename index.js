@@ -87,8 +87,22 @@ app.get('/screen', function(req, res) {
   res.send(200, screen);
 });
 
+var keys = {
+  right: 0,
+  left: 1,
+  up: 2,
+  down: 3,
+  a: 4,
+  b: 5,
+  select: 6,
+  start: 7
+};
+
 app.post('/input', function(req, res) {
-  console.log(req.body);
+  var command = (req.body.text || '').toLowerCase().trim();
+  if (keys.hasOwnProperty(command)) {
+    emu.move(keys[command]);
+  }
   res.send(200);
 });
 
