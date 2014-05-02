@@ -6,6 +6,7 @@ var md5 = require('crypto').createHash('md5');
 var debug = require('debug')('weplay:worker');
 var express = require('express');
 var bodyParser = require('body-parser');
+var superagent = require('superagent');
 
 if (!process.env.WEPLAY_ROM) {
   console.log('You must specify the ENV variable `WEPLAY_ROM` '
@@ -87,6 +88,8 @@ app.get('/screen', function(req, res) {
   res.send(200, screen);
 });
 
+var updated = false;
+
 var keys = {
   right: 0,
   left: 1,
@@ -102,8 +105,23 @@ app.post('/input', function(req, res) {
   var command = (req.body.text || '').toLowerCase().trim();
   if (keys.hasOwnProperty(command)) {
     emu.move(keys[command]);
+    updated = true;
   }
   res.send(200);
 });
+
+var agent = superagent.agent();
+
+setInterval(function() {
+  if (updated) {
+    updated = false;
+    agent
+      .post(WEPLAY_OUT_URL)
+      .send('test')
+      .end(function (err, res) {
+      
+      });
+  }
+}, 5000)
 
 app.listen(80);
