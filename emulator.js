@@ -49,7 +49,7 @@ Emulator.prototype.move = function(key){
     gb.JoyPadEvent(key, true);
     setTimeout(function(){
       gb.JoyPadEvent(key, false);
-    }, 50);
+    }, 100);
   }
   return this;
 };
