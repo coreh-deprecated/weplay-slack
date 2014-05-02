@@ -49,7 +49,7 @@ function load(){
   fs.readFile(sav, function(err, state){
     if (!err && state) {
       debug('init from state');
-      emu.initWithState(msgpack.unpack(state));
+      emu.initWithState(state);
     } else {
       debug('init from rom');
       emu.initWithRom(rom);
