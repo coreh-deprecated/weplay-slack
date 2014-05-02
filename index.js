@@ -116,7 +116,7 @@ setInterval(function() {
   if (updated) {
     updated = false;
     agent
-      .post(WEPLAY_OUT_URL)
+      .post(process.env.WEPLAY_OUT_URL)
       .send('test')
       .end(function (err, res) {
       
