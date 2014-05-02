@@ -105,11 +105,23 @@ var keys = {
 };
 
 app.post('/input', function(req, res) {
-  var command = (req.body.text || '').toLowerCase().trim();
-  if (keys.hasOwnProperty(command)) {
-    emu.move(keys[command]);
-    if (typeof timeout == 'undefined') {
-      timeout = setTimeout(display, 5000);
+  var commands = (req.body.text || '').toLowerCase().trim().split(' ');
+  var valid = true;
+  for (var i = 0; i < commands.length; i++) {
+    if (!keys.hasOwnProperty(commands[i])) {
+      valid = false;
+    }
+  }
+  if (valid) {
+    for (var i = 0; i < commands.length; i++) {
+      (function(command) {
+        setTimeout(function() {
+          emu.move(keys[command]);
+          if (typeof timeout == 'undefined') {
+            timeout = setTimeout(display, 5000);
+          }
+        }, i * 30);
+      })(commands[i]);
     }
   }
   res.send(200);
