@@ -4,6 +4,7 @@ var emulator = require('./emulator');
 var join = require('path').join;
 var md5 = require('crypto').createHash('md5');
 var debug = require('debug')('weplay:worker');
+var express = require('express');
 
 if (!process.env.WEPLAY_ROM) {
   console.log('You must specify the ENV variable `WEPLAY_ROM` '
@@ -75,3 +76,12 @@ function load(){
 //emu.move(move.toString());
 
 load();
+
+var app = express();
+
+app.get('/screen', function(req, res) {
+  res.set('Content-Type', 'image/png');
+  res.send(200, screen);
+});
+
+app.listen(80);
