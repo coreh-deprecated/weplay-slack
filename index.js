@@ -120,7 +120,7 @@ app.post('/input', function(req, res) {
           if (typeof timeout == 'undefined') {
             timeout = setTimeout(display, 5000);
           }
-        }, i * 30);
+        }, i * 1000);
       })(commands[i]);
     }
   }
