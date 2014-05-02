@@ -83,7 +83,7 @@ var app = express();
 
 app.use(bodyParser());
 
-app.get('/screen', function(req, res) {
+app.get('/screen/:time.png', function(req, res) {
   res.set('Content-Type', 'image/png');
   res.send(200, screen);
 });
