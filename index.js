@@ -24,6 +24,8 @@ var sav = file.replace(/\.[a-z]+$/, '.sav');
 var rom = fs.readFileSync(file);
 var hash = md5.update(file).digest('hex');
 debug('rom hash %s', hash);
+var screens = process.env.WEPLAY_SCREENS_DIR;
+if ('/' != screens[0]) screens = join(process.cwd(), screens);
 
 // save interval
 var saveInterval = process.env.WEPLAY_SAVE_INTERVAL || 60000;
@@ -86,7 +88,7 @@ app.use(bodyParser());
 app.get('/screen/:time.png', function(req, res) {
   var time = parseInt(req.params.time, 10);
   res.set('Content-Type', 'image/png');
-  res.sendfile(path.join(process.env.WEPLAY_SCREENS_DIR, time + '.png'));
+  res.sendfile(path.join(screens, time + '.png'));
 });
 
 var updated = false;
@@ -118,7 +120,7 @@ setInterval(function() {
     updated = false;
     
     var time = new Date().valueOf();
-    fs.writeFile(path.join(process.env.WEPLAY_SCREENS_DIR, time + '.png'), screen, function(err) {
+    fs.writeFile(path.join(screens, time + '.png'), screen, function(err) {
       if (err) return;
       agent
         .post(process.env.WEPLAY_OUT_URL)
