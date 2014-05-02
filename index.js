@@ -91,7 +91,7 @@ app.get('/:time.png', function(req, res) {
   res.sendfile(join(screens, time + '.png'));
 });
 
-var updated = false;
+var timeout;
 
 var keys = {
   right: 0,
@@ -108,26 +108,25 @@ app.post('/input', function(req, res) {
   var command = (req.body.text || '').toLowerCase().trim();
   if (keys.hasOwnProperty(command)) {
     emu.move(keys[command]);
-    updated = true;
+    if (typeof timeout == 'undefined') {
+      timeout = setTimeout(display, 5000);
+    }
   }
   res.send(200);
 });
 
 var agent = superagent.agent();
 
-setInterval(function() {
-  if (updated) {
-    updated = false;
-    
-    var time = new Date().valueOf();
-    fs.writeFile(join(screens, time + '.png'), screen, function(err) {
-      if (err) return;
-      agent
-        .post(process.env.WEPLAY_OUT_URL)
-        .send(process.env.WEPLAY_HOST + '/' + time + '.png') // date is added to prevent caching by slack
-        .end(function (err, res) {});
-    });    
-  }
-}, 5000)
+function display() {
+  timeout = undefined;
+  var time = new Date().valueOf();
+  fs.writeFile(join(screens, time + '.png'), screen, function(err) {
+    if (err) return;
+    agent
+      .post(process.env.WEPLAY_OUT_URL)
+      .send(process.env.WEPLAY_HOST + '/' + time + '.png') // date is added to prevent caching by slack
+      .end(function (err, res) {});
+  });
+}
 
 app.listen(80);
