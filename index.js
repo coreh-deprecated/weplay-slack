@@ -14,15 +14,11 @@ if (!process.env.WEPLAY_ROM) {
 
 process.title = 'weplay-emulator';
 
-// redis
-var redis = require('./redis')();
-var sub = require('./redis')();
-var io = require('socket.io-emitter')(redis);
-
 // rom
 var file = process.env.WEPLAY_ROM;
 if ('/' != file[0]) file = join(process.cwd(), file);
 debug('rom %s', file);
+var sav = file.replace(/\.[a-z]+$/, '.sav');
 var rom = fs.readFileSync(file);
 var hash = md5.update(file).digest('hex');
 debug('rom hash %s', hash);
@@ -33,6 +29,8 @@ debug('save interval %d', saveInterval);
 
 // load emulator
 var emu;
+
+var screen;
 
 function load(){
   debug('loading emulator');
@@ -45,13 +43,11 @@ function load(){
   });
 
   emu.on('frame', function(frame){
-    io.emit('frame', frame);
-    redis.set('weplay:frame', frame);
+    screen = frame;
   });
 
-  redis.get('weplay:state:' + hash, function(err, state){
-    if (err) throw err;
-    if (state) {
+  fs.readFile(sav, function(err, state){
+    if (!err && state) {
       debug('init from state');
       emu.initWithState(msgpack.unpack(state));
     } else {
@@ -68,17 +64,15 @@ function load(){
       var snap = emu.snapshot();
       if (snap) {
         debug('saving state');
-        redis.set('weplay:state:' + hash, msgpack.pack(snap));
+        fs.writeFile(sav, snap, function() { 
+          debug('state saved');
+        });
         save();
       }
     }, saveInterval);
   }
 }
 
-sub.subscribe('weplay:move');
-sub.on('message', function(channel, move){
-  if ('weplay:move' != channel) return;
-  emu.move(move.toString());
-});
+//emu.move(move.toString());
 
 load();
