@@ -46,10 +46,10 @@ function load(){
     screen = frame;
   });
 
-  fs.readFile(sav, function(err, state){
+  fs.readFile(sav, { encoding: 'utf-8' }, function(err, state){
     if (!err && state) {
       debug('init from state');
-      emu.initWithState(state);
+      emu.initWithState(JSON.parse(state));
     } else {
       debug('init from rom');
       emu.initWithRom(rom);
@@ -61,7 +61,7 @@ function load(){
   function save(){
     debug('will save in %d', saveInterval);
     setTimeout(function(){
-      var snap = emu.snapshot();
+      var snap = JSON.stringify(emu.snapshot());
       if (snap) {
         debug('saving state');
         fs.writeFile(sav, snap, function() { 
