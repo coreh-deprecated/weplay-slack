@@ -95,17 +95,23 @@ var timeout;
 
 var keys = {
   right: 0,
+  r: 0,
   left: 1,
+  l: 1,
   up: 2,
+  u: 2,
   down: 3,
+  d: 3,
   a: 4,
   b: 5,
   select: 6,
-  start: 7
+  e: 6,
+  start: 7,
+  s: 7
 };
 
 app.post('/input', function(req, res) {
-  var commands = (req.body.text || '').toLowerCase().trim().split(' ');
+  var commands = (req.body.text || '').toLowerCase().trim().replace(/\s+/g, ' ').split(' ');
   var valid = true;
   for (var i = 0; i < commands.length; i++) {
     if (!keys.hasOwnProperty(commands[i])) {
