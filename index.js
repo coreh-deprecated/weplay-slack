@@ -80,7 +80,7 @@ load();
 
 var app = express();
 
-express.use(bodyParser());
+app.use(bodyParser());
 
 app.get('/screen', function(req, res) {
   res.set('Content-Type', 'image/png');
