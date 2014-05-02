@@ -84,8 +84,9 @@ var app = express();
 app.use(bodyParser());
 
 app.get('/screen/:time.png', function(req, res) {
+  var time = parseInt(req.params.time, 10);
   res.set('Content-Type', 'image/png');
-  res.send(200, screen);
+  res.sendfile(path.join(process.env.WEPLAY_SCREENS_DIR, time + '.png'));
 });
 
 var updated = false;
@@ -115,10 +116,15 @@ var agent = superagent.agent();
 setInterval(function() {
   if (updated) {
     updated = false;
-    agent
-      .post(process.env.WEPLAY_OUT_URL)
-      .send(process.env.WEPLAY_HOST + '/screen/' + new Date().valueOf() + '.png') // date is added to prevent caching by slack
-      .end(function (err, res) {});
+    
+    var time = new Date().valueOf();
+    fs.writeFile(path.join(process.env.WEPLAY_SCREENS_DIR, time + '.png'), screen, function(err) {
+      if (err) return;
+      agent
+        .post(process.env.WEPLAY_OUT_URL)
+        .send(process.env.WEPLAY_HOST + '/screen/' + time + '.png') // date is added to prevent caching by slack
+        .end(function (err, res) {});
+    });    
   }
 }, 5000)
 
