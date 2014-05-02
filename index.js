@@ -85,7 +85,7 @@ var app = express();
 
 app.use(bodyParser());
 
-app.get('/screen/:time.png', function(req, res) {
+app.get('/:time.png', function(req, res) {
   var time = parseInt(req.params.time, 10);
   res.set('Content-Type', 'image/png');
   res.sendfile(join(screens, time + '.png'));
@@ -124,7 +124,7 @@ setInterval(function() {
       if (err) return;
       agent
         .post(process.env.WEPLAY_OUT_URL)
-        .send(process.env.WEPLAY_HOST + '/screen/' + time + '.png') // date is added to prevent caching by slack
+        .send(process.env.WEPLAY_HOST + time + '.png') // date is added to prevent caching by slack
         .end(function (err, res) {});
     });    
   }
